@@ -444,12 +444,22 @@ console.log("GenFleet Supabase client initialized:", !!genfleetSupabase);
 
   indicator.textContent = "Checking database connection...";
   document.body.appendChild(indicator);
-
-  genfleetSupabase
-    .from("generators")
-    .select("id")
-    .limit(1)
-    .then(function(result) {
+genfleetSupabase
+      .rpc("genfleet_connection_check")
+        .then(function(result) {
+            if (result.error) {
+                  console.error("Connection error:", result.error);
+                        indicator.style.background = "#b42318";
+                              indicator.textContent = "Database error: " + result.error.message;
+                                  } else {
+                                        indicator.style.background = "#167a45";
+                                              indicator.textContent = result.data;
+                                                  }
+                                                    })
+                                                      .catch(function(error) {
+                                                          indicator.style.background = "#b42318";
+                                                              indicator.textContent = "Connection failed: " + error.message;
+                                                                });rom("generators")
       if (result.error) {
         indicator.style.background = "#b42318";
         indicator.textContent = "Database error: " +
