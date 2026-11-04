@@ -166,7 +166,8 @@ label.f .hint{font-weight:400;font-size:12.5px;letter-spacing:0}
 /* maintenance */
 .mfilters{display:grid;gap:10px 12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr))}
 label.f textarea{min-height:76px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font:inherit;font-size:16px;font-weight:400;letter-spacing:0;width:100%;resize:vertical}
-.clamp{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;max-width:340px}
+.clamp{display:-webkit-box; -webkit-line-clamp: 2;
+line-clamp: 2;-webkit-box-orient:vertical;overflow:hidden;max-width:340px}
 .mt td{vertical-align:top}.mt td:nth-child(1),.mt td:nth-child(2){white-space:nowrap}.mt .num{white-space:nowrap}
 @media (max-width:1060px){
   .mt thead{display:none}.mt,.mt tbody{display:block}
@@ -413,9 +414,65 @@ label.f.invalid .cdd-btn{border-color:var(--bad);box-shadow:0 0 0 1px var(--bad)
 <div id="modal"></div>
 <div id="confirm"></div>
 
+<script
+src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
 (function(){
 "use strict";
+
+/* ---------- Supabase connection ---------- */
+var GENFLEET_SUPABASE_URL = "https://qgqairjqfknqijfmxnni.supabase.co";
+
+var GENFLEET_SUPABASE_KEY = "sb_publishable_26nqtHmCgheTfpoCPB4-jg_xZOViIj-";
+
+var genfleetSupabase = window.supabase.createClient(
+  GENFLEET_SUPABASE_URL,
+  GENFLEET_SUPABASE_KEY
+);
+
+console.log("GenFleet Supabase client initialized:", !!genfleetSupabase);
+
+/* ---------- visible Supabase connection test ---------- */
+(function() {
+  var indicator = document.createElement("div");
+
+  indicator.style.cssText =
+    "position:fixed;bottom:12px;right:12px;z-index:99999;" +
+    "padding:12px 16px;border-radius:8px;background:#334155;" +
+    "color:white;font:13px Arial,sans-serif;";
+
+  indicator.textContent = "Checking database connection...";
+  document.body.appendChild(indicator);
+
+  genfleetSupabase
+    .from("generators")
+    .select("id")
+    .limit(1)
+    .then(function(result) {
+      if (result.error) {
+        indicator.style.background = "#b42318";
+        indicator.textContent = "Database error: " +
+          result.error.message;
+      } else {
+        indicator.style.background = "#167a45";
+        indicator.textContent = "Database connected successfully!";
+      }
+    })
+    .catch(function(error) {
+      indicator.style.background = "#b42318";
+      indicator.textContent = "Connection failed: " + error.message;
+    });
+})();
+en(function(result) {
+    if (result.error) {
+      console.error("GenFleet database connection error:", result.error);
+    } else {
+      console.log("GenFleet database connection successful!");
+      console.log("Generator records retrieved:", result.data);
+    }
+  });
+
 /* ---------- sample data (made up, for demonstration only) ---------- */
 var STATUS={
   available:{l:"Available",c:"ok",col:"var(--ok)"},
